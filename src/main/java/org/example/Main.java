@@ -5,12 +5,15 @@ import iteration1.Circle;
 import iteration1.Figure;
 import iteration1.Parallelepiped;
 import iteration1.Rectangle;
+import iteration1.Triangle;
 import iteration1.Volumable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        Triangle triangle = new Triangle("Banana");
 
         Circle circle = new Circle(3d);
         Ball ball = new Ball(3d);
@@ -20,7 +23,7 @@ public class Main {
         List<Figure> figures = List.of(circle, ball, rectangle, parallelepiped);
         List volumeFigures = List.of(ball, parallelepiped); // Raw use of parameterized class - ему не нравится но работает
         List<Volumable> volumeFiguresI = List.of(ball, parallelepiped);
-
+//        List<? extends Figure & Volumable> lists = new ArrayList<>();
         printAllPerimeters(figures);
         printAllSquares(figures);
 
