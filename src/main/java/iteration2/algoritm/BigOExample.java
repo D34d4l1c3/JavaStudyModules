@@ -1,9 +1,13 @@
-package iteration2;
+package iteration2.algoritm;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+//O, читается как «О», «О-большое» или «биг (big) О», описывает оценку сложности сверху.
+//То есть максимальное количество операций, которое алгоритм может выполнить в худшем случае.
+//В скобках после О указывают функцию, которая ограничивает сложность.
 
 public class BigOExample {
     // O(N) линейная сложность зависит только от колчества элементов коллекции
