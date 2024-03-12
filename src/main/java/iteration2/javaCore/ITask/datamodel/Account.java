@@ -33,4 +33,9 @@ public class Account implements DataModel<Long>, DataExternalMutable {
         changeCount++;
         this.amount = amount;
     }
+
+    @Override
+    public String toString() {
+        return "\nName: " + amount + "\n";
+    }
 }

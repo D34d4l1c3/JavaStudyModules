@@ -5,6 +5,7 @@ public abstract class Figure {
 
     public Figure(String name) {
         this.name = name;
+        System.out.println("Я абстрактный конструктор фигур и создаю : " + name);
     }
 
     public abstract double getSquare();

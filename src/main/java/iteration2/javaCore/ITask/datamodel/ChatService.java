@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatService {
+    static {
+        System.out.println("Я инициализируюсь когда класс.");
+    }
     @Getter
     private static List<ChatMessage> chat = new ArrayList<>();
     public static void sendMessage(String message, Person person){
