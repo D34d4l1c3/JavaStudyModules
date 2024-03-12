@@ -18,7 +18,6 @@ public class ChatService {
         chat.add(new ChatMessage(message,person));
     }
     public static void replyMessage(String message,ChatMessage chatMessage,Person person){
-
         chat.add(new ChatMessage("Ответ от: "+person.getName()+""+message,person,chatMessage.getId()+0.1));
     }
 }

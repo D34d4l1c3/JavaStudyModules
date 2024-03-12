@@ -28,7 +28,8 @@ public class ChatMessage implements DataOrderable, DataModel<Long> {
         this.id = lastId++;
         orderNum = lastOrderNum++;
     }
-    public ChatMessage(String message, Person person, Double orderNum){
+
+    public ChatMessage(String message, Person person, Double orderNum) {
         this.message = message;
         this.owner = person;
         this.created = new Date();
@@ -38,6 +39,6 @@ public class ChatMessage implements DataOrderable, DataModel<Long> {
 
     @Override
     public String toString() {
-        return this.owner.getName()+":"+this.getMessage();
+        return this.owner.getName() + ":" + this.getMessage();
     }
 }
