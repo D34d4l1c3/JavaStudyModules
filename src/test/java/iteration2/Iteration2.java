@@ -108,28 +108,46 @@ public class Iteration2 {
 
     @Test
     void testEquals() {
+//      Процесс помещения строк в пул называется интернирование
+//      Если строка, созданная при помощи конструктора хранится непосредственно в куче,
+//      то строка, созданная как строковый литерал,
+//      уже хранится в специальном месте кучи — в так называемом пуле строк (string pool).
+
         String s1 = "TEST";
-        String s2 = new String("TEST");
-        String s3 = new String("NO_TEST");
+        String s2 = new String("TEST");             // heap
+        String s3 = new String("NO_TEST");          // heap
         String s4 = "TEST";
-        String s5 = new String("TEST");
+        String s5 = new String("TEST");             // heap
+        String s6 = "TE"+"ST";
+        String s7 = "TE";
+        String s8 = s7+"ST";                                // heap
+        String s9 = (new String("TEST")).intern();   // s9  в пуле Вместо интернирования необходимо использовать дедупликацию (рассматривается далее)
 
-        System.out.println("String equals "+s1.equals(s2)); // true
-        System.out.println("String equals "+s2.equals(s5)); // true
-        System.out.println("String equals "+s1.equals(s3)); // false
-        System.out.println("String equals "+s1.equals(s4)); // true
+        //До Java версии 7 - пул был в Permanent Generation и сборщик его не убирал после пернесли в кучу где убирает
+        System.out.println("String == "+ (s1 == s2)); // false
+        System.out.println("String == "+ (s2 == s5)); // false -- ссылки разные
+        System.out.println("String == "+ (s1 == s3)); // false
+        System.out.println("String == "+ (s1 == s4)); // true -- а тут одинаковые - в String pool одна строка
+        System.out.println("String == "+ (s1 == s6)); // true -- тоже одинаково но в String pool будут еще 2 строки TE и ST
+        System.out.println("String == "+ (s1 == s8)); // false так как s7 и "ST" лежат в String pool - ясно значение во время компиляции, а s8 в куче
+        System.out.println("String == "+ (s1 == s9)); // true так как интернировали в пул
 
-        SimpleClass simpleClass = new SimpleClass(1,"name");
-        SimpleClass simpleClass2 = new SimpleClass(1,"name");
-        SimpleClass simpleClass3 = new SimpleClass(2,"name");
-        SimpleClass simpleClass4 = new SimpleClass(3,"name");
-
-        System.out.println("SimpleClass equals "+simpleClass.equals(simpleClass2)); // false т.к не переопределялись методы а ссылки разные
-
-        System.out.println(simpleClass.compareTo(simpleClass2)); // 0
-        System.out.println(simpleClass.compareTo(simpleClass3)); // 1
-        System.out.println(simpleClass.compareTo(simpleClass4)); // 1
-        System.out.println(simpleClass4.compareTo(simpleClass)); // -1
+//        System.out.println("String equals "+ s1.equals(s2)); // true
+//        System.out.println("String equals "+ s2.equals(s5)); // true
+//        System.out.println("String equals "+ s1.equals(s3)); // false
+//        System.out.println("String equals "+ s1.equals(s4)); // true
+//
+//        SimpleClass simpleClass = new SimpleClass(1,"name");
+//        SimpleClass simpleClass2 = new SimpleClass(1,"name");
+//        SimpleClass simpleClass3 = new SimpleClass(2,"name");
+//        SimpleClass simpleClass4 = new SimpleClass(3,"name");
+//
+//        System.out.println("SimpleClass equals "+simpleClass.equals(simpleClass2)); // false т.к не переопределялись методы а ссылки разные
+//
+//        System.out.println(simpleClass.compareTo(simpleClass2)); // 0
+//        System.out.println(simpleClass.compareTo(simpleClass3)); // 1
+//        System.out.println(simpleClass.compareTo(simpleClass4)); // 1
+//        System.out.println(simpleClass4.compareTo(simpleClass)); // -1
 
 //        Person person = new Person("Anna",ServiceType.VIP,"anna@mail.com");
 //        Person person2 = new Person("Anna",ServiceType.VIP,"anna@mail.com");
