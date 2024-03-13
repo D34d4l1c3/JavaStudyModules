@@ -1,21 +1,14 @@
 package iteration2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import iteration2.algoritm.BigOExample;
-import iteration2.javaCore.ITask.ChatMessage;
-import iteration2.javaCore.ITask.ServiceType;
-import iteration2.javaCore.ITask.Person;
-import iteration2.javaCore.ITask.datamodel.ChatService;
+import org.example.iteration2.algoritm.BigOExample;
+import org.example.iteration2.basic.SimpleClass;
+import org.example.iteration2.javaCore.ITask.ServiceType;
+import org.example.iteration2.javaCore.ITask.Person;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 public class Iteration2 {
     @Test
@@ -69,10 +62,15 @@ public class Iteration2 {
     @SneakyThrows
     @Test
     void testTask() {
-        List<String> messageList = List.of("MSG1","MSG2","MSG3","RMSG4","MSG5","MSG6");
+        List<String> messageList = List.of("MSG1", "MSG2", "MSG3", "RMSG4", "MSG5", "MSG6");
+        System.out.println("Начало работы программа - чат");
+//        Класс будет загружен при обращении к статическому классу или методу
+        System.out.println("Статическая переменная в классе до создания экземпляра" + Person.testStatField);
 
+        // Класс будет загружен при создании первого экземпляра
         // Первый блок мусорных данных
-//        Person person1 = new Person("Person1", ServiceType.BASE, "person1@mail.com");
+        Person person1 = new Person("Person1", ServiceType.BASE, "person1@mail.com");
+//        System.out.println("Статическая переменная в классе после "+Person.testStatField);
 //        Person jack = new Person("Jack", ServiceType.BASE, "jack@mail.com");
 //        Person jack2 = new Person("Jack", ServiceType.BASE, "jack1983@mail.com");
 //        Person dubJack = new Person("Jack", ServiceType.BASE, "jack@mail.com");
@@ -81,20 +79,20 @@ public class Iteration2 {
 //        Person person3 = new Person("Gera44", ServiceType.VIP, "gera@must.die");
 
         // Данные клиента из файла
-        ObjectMapper om = new ObjectMapper(new YAMLFactory());
-        File file = new File("src/main/java/iteration2/javaCore/ITask/data/persons.yaml");
+//        ObjectMapper om = new ObjectMapper(new YAMLFactory());
+//        File file = new File("src/main/java/iteration2/javaCore/ITask/data/persons.yaml");
 
         // Исходный файл содержит дубликаты по переопределенный функции. Видно разницу между листом и сетом
-        List<Person> personList = om.readerForListOf(Person.class).readValue(file);
-        Set<Person> personSet = new HashSet<>(personList);
-        System.out.println(personList);
-        System.out.println(personSet);
+//        List<Person> personList = om.readerForListOf(Person.class).readValue(file);
+//        Set<Person> personSet = new HashSet<>(personList);
+//        System.out.println(personList);
+//        System.out.println(personSet);
 
 
-        Random rand = new Random();
-        messageList.forEach(x->ChatService.sendMessage(x,personList.get(rand.nextInt(personList.size()))));
-        personList.forEach(x-> x.donate((double) rand.nextInt(1000),personList.get(rand.nextInt(personList.size()))));
-        ChatService.getChat().forEach(System.out::println);
+//        Random rand = new Random();
+//        messageList.forEach(x->ChatService.sendMessage(x,personList.get(rand.nextInt(personList.size()))));
+//        personList.forEach(x-> x.donate((double) rand.nextInt(1000),personList.get(rand.nextInt(personList.size()))));
+//        ChatService.getChat().forEach(System.out::println);
 
         // Типа реализация функционала работы с моделью
 //        ChatService.sendMessage("Привет! Закиньте донаты, кушать нечего", person1);
@@ -108,4 +106,34 @@ public class Iteration2 {
 
     }
 
+    @Test
+    void testEquals() {
+        String s1 = "TEST";
+        String s2 = new String("TEST");
+        String s3 = new String("NO_TEST");
+        String s4 = "TEST";
+        String s5 = new String("TEST");
+
+        System.out.println("String equals "+s1.equals(s2)); // true
+        System.out.println("String equals "+s2.equals(s5)); // true
+        System.out.println("String equals "+s1.equals(s3)); // false
+        System.out.println("String equals "+s1.equals(s4)); // true
+
+        SimpleClass simpleClass = new SimpleClass(1,"name");
+        SimpleClass simpleClass2 = new SimpleClass(1,"name");
+        SimpleClass simpleClass3 = new SimpleClass(2,"name");
+        SimpleClass simpleClass4 = new SimpleClass(3,"name");
+
+        System.out.println("SimpleClass equals "+simpleClass.equals(simpleClass2)); // false т.к не переопределялись методы а ссылки разные
+
+        System.out.println(simpleClass.compareTo(simpleClass2)); // 0
+        System.out.println(simpleClass.compareTo(simpleClass3)); // 1
+        System.out.println(simpleClass.compareTo(simpleClass4)); // 1
+        System.out.println(simpleClass4.compareTo(simpleClass)); // -1
+
+//        Person person = new Person("Anna",ServiceType.VIP,"anna@mail.com");
+//        Person person2 = new Person("Anna",ServiceType.VIP,"anna@mail.com");
+//        System.out.println("Person equals "+person.equals(person2)); // true т.к переопределялись метод сроавнивающи  объект
+//        System.out.println("Person == "+(person == person2));      // false т.к только ссылки как раньше equals был
+    }
 }
