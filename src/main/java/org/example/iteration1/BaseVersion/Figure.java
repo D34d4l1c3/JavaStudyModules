@@ -1,4 +1,4 @@
-package org.example.iteration1;
+package org.example.iteration1.BaseVersion;
 
 public abstract class Figure {
     private String name;

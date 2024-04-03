@@ -1,4 +1,4 @@
-package org.example.iteration1;
+package org.example.iteration1.BaseVersion;
 
 public class Rectangle extends Figure {
     private double width;

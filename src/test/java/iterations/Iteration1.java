@@ -1,17 +1,20 @@
-package iteration1;
+package iterations;
 
-import org.example.iteration1.Ball;
-import org.example.iteration1.Circle;
-import org.example.iteration1.Figure;
-import org.example.iteration1.Parallelepiped;
-import org.example.iteration1.Rectangle;
-import org.example.iteration1.Triangle;
-import org.example.iteration1.Volumable;
+import org.example.iteration1.BaseVersion.Ball;
+import org.example.iteration1.BaseVersion.Circle;
+import org.example.iteration1.BaseVersion.Figure;
+import org.example.iteration1.BaseVersion.Parallelepiped;
+import org.example.iteration1.BaseVersion.Rectangle;
+import org.example.iteration1.BaseVersion.Triangle;
+import org.example.iteration1.BaseVersion.Volumable;
+import org.example.iteration1.version1.entity.*;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Iteration1 {
+
     @Test
     public void testFigures(){
         Triangle triangle = new Triangle("Banana");

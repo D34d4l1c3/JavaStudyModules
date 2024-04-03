@@ -1,7 +1,6 @@
-package iteration2;
+package iterations;
 
 import org.example.iteration2.algoritm.BigOExample;
-import org.example.iteration2.basic.SimpleClass;
 import org.example.iteration2.javaCore.ITask.ServiceType;
 import org.example.iteration2.javaCore.ITask.Person;
 import lombok.SneakyThrows;
