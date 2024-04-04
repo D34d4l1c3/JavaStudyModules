@@ -1,4 +1,4 @@
-package org.example.iteration1.version1.entity;
+package org.example.iteration3.version1.model;
 
 import java.math.BigDecimal;
 

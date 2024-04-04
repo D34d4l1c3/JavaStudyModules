@@ -7,10 +7,8 @@ import org.example.iteration1.BaseVersion.Parallelepiped;
 import org.example.iteration1.BaseVersion.Rectangle;
 import org.example.iteration1.BaseVersion.Triangle;
 import org.example.iteration1.BaseVersion.Volumable;
-import org.example.iteration1.version1.entity.*;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class Iteration1 {
