@@ -14,16 +14,16 @@ import java.util.Optional;
 
 public final class Utils {
     /**
-     *
      * @param number
-     * @return
      * @param <T>
+     * @return
      */
     @SneakyThrows(NullParamException.class)
     @SuppressWarnings("unchecked")
     public static <T extends Number> T validNumber(@Nullable T number) {
-        return BigDecimal.valueOf(Optional.ofNullable(number).orElseThrow(() -> new NullParamException("Пустой параметр")).doubleValue()).signum() == -1 ?
-                (T) validNegative(BigDecimal.valueOf(number.doubleValue())) : number;
+        return BigDecimal.valueOf(Optional.ofNullable(number).orElseThrow(() -> new NullParamException("Пустой параметр")).doubleValue()).signum() == -1
+                ? (T) validNegative(BigDecimal.valueOf(number.doubleValue()))
+                : number;
     }
 
     @SneakyThrows(BadDataException.class)
