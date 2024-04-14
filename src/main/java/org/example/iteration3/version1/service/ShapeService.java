@@ -57,6 +57,9 @@ public class ShapeService {
         }
     });
 
+    public IRefreshShape getFuncRefresh(){
+        return iRefreshShape;
+    }
     @SneakyThrows(CriticalException.class)
     public static List<Optional<Shape>> refreshShapesById(Long... ids) {
         return iRefreshShape.refreshShapesById(ids);
