@@ -1,4 +1,4 @@
-package org.example.iteration4;
+package org.example.iteration4.Model;
 
 import org.example.iteration3.version1.model.Shape;
 
@@ -8,8 +8,8 @@ import java.util.Optional;
 public interface IRefreshShape {
     /**
      *
-     * @param ids
+     * @param shapes
      * @return
      */
-    List<Optional<Shape>> refreshShapesById(Long... ids);
+    List<Optional<Shape>> refreshShapesById(Shape... shapes);
 }

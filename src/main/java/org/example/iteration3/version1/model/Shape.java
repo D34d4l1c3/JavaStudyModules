@@ -1,10 +1,8 @@
 package org.example.iteration3.version1.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.example.iteration2.javaCore.ITask.datamodel.DataModel;
-import org.example.iteration3.version1.utils.Utils;
-import org.example.iteration4.entity.Cacheable;
+import org.example.iteration4.Model.Cacheable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

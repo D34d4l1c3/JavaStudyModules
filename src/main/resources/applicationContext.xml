@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+<!--    Указываем спрингу что нужно сканировать для аннотаций и где-->
+    <context:component-scan base-package="org.example"/>
+
+    <bean id="building"
+          scope="prototype"
+          class="org.example.iteration4.Model.Building">
+        <constructor-arg value="3"/>
+    </bean>
+<!--    <context:property-placeholder location="classpath:musicPleer.properties"/>-->
+<!--    <bean id="classicMusicBean"-->
+<!--          init-method="doMyInit"-->
+<!--          destroy-method="doMyDestroy"-->
+<!--          factory-method="getClassicMusic"-->
+<!--          class="spring.course.ClassicMusic">-->
+<!--    </bean>-->
+<!--    <bean id="rockMusicBean"-->
+<!--          class="spring.course.RockMusic">-->
+<!--    </bean>-->
+<!--  &lt;!&ndash;  Здесь создается всегда один бин - getBean будет возвращать ссылку на один и тот же объект Singleton &ndash;&gt;-->
+<!--    <bean id="christmasMusic"-->
+<!--          class="spring.course.ChristmasMusic">-->
+<!--        &lt;!&ndash; Можно указать явно = но по дефолту и так он  scope="singleton"&ndash;&gt;-->
+<!--    </bean>-->
+<!--    <bean id="musicPleer"-->
+<!--          scope="prototype"-->
+<!--          init-method="InitMusicPleer"-->
+<!--          destroy-method="DestroyMusicPleer"-->
+<!--          class="spring.course.MusicPleer">-->
+<!--&lt;!&ndash;        Через конструктор&ndash;&gt;-->
+<!--&lt;!&ndash;        <constructor-arg ref="musicBean"/>&ndash;&gt;-->
+<!--&lt;!&ndash;        Внедрение зависимости через сеттер на классе    &ndash;&gt;-->
+<!--        <property name="music" ref="classicMusicBean"/>-->
+<!--&lt;!&ndash;        <property name="name" value="Winamp"/>&ndash;&gt;-->
+<!--&lt;!&ndash;        <property name="volume" value="50"/>&ndash;&gt;-->
+<!--        <property name="name" value="${musicPleer.name}"/>-->
+<!--        <property name="volume" value="${musicPleer.volume}"/>-->
+<!--        <property name="musicList">-->
+<!--            <list>-->
+<!--                <ref bean="rockMusicBean"/>-->
+<!--                <ref bean="christmasMusic"/>-->
+<!--                <ref bean="classicMusicBean"/>-->
+<!--            </list>-->
+<!--        </property>-->
+
+<!--    </bean>-->
+
+</beans>

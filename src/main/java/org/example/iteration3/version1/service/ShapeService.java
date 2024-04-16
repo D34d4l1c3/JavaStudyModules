@@ -4,18 +4,19 @@ package org.example.iteration3.version1.service;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
+import org.example.iteration3.version1.model.Circle;
 import org.example.iteration3.version1.model.Shape;
 import org.example.iteration3.version1.model.IRound;
 import org.example.iteration3.version1.model.FlatShape;
 import org.example.iteration3.version1.model.Sphere;
 import org.example.iteration3.version1.model.VolumetricShape;
-import org.example.iteration4.IRefreshShape;
-import org.example.iteration4.entity.Cacheable;
+import org.example.iteration4.Model.IRefreshShape;
+import org.example.iteration4.Model.Cacheable;
 import org.example.iteration4.exception.CriticalException;
 import org.example.iteration4.exception.NonCriticalException;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -35,21 +38,64 @@ public class ShapeService {
      * @return
      */
     public final Map<Long, Shape> cacheMap = new HashMap<>();
-    public final Map<Long, Shape> shapeMap;
+    public final Map<Long, FlatShape> flatShapeMap = new HashMap<>();
+    public final Map<Long, VolumetricShape> volumetricShapeMap = new HashMap<>();
+    public final Map<Long, Shape> shapeMap = new HashMap<>();
+    public final Supplier<FlatShape> getFlatShape = () -> new Circle(BigDecimal.valueOf(33), 1);
+    public final Consumer<Shape> saveShapes2DB = (shape) -> {
+        if(shape instanceof FlatShape){
+            flatShapeMap.put(shape.getId(), (FlatShape) shape);
+        } else if (shape instanceof VolumetricShape) {
+            volumetricShapeMap.put(shape.getId(), (VolumetricShape) shape);
+        }
+//        switch (shape) {
+//            case FlatShape flatShape -> flatShapeMap.put(shape.getId(), (FlatShape) shape);
+//            case VolumetricShape volumetricShape -> volumetricShapeMap.put(shape.getId(), (VolumetricShape) shape);
+//            default -> {
+//                break;
+//            }
+//        }
+        shapeMap.put(shape.getId(), shape);
+    };
+    public final Supplier<VolumetricShape> getVolumeShape = () -> new Sphere(BigDecimal.valueOf(33), BigDecimal.TEN, 8);
+
+    private List<Optional<Shape>> getShapeFromDB(Class<? extends Shape> cl, List<Long> lostIds, Long... ids) {
+        return Arrays.stream(ids).map(id -> {
+            Optional<Shape> shape = getShapesByClassFromDB(cl, id);
+            if (shape.isEmpty()) {
+                lostIds.add(id);
+            }
+            return shape;
+        }).collect(Collectors.toList());
+    }
+
+    private Optional<Shape> getShapesByClassFromDB(Class<? extends Shape> cl, Long id) {
+        return Optional.ofNullable(cl.equals(FlatShape.class) ?
+                flatShapeMap.get(id) : cl.equals(VolumetricShape.class) ? volumetricShapeMap.get(id) : shapeMap.get(id));
+    }
 
     //Наполняем якобы БД
     static {
-        shapeMap = new HashMap<Long, Shape>();
-        Shape shape;
         for (int i = 10; i < 50; i++) {
-            shape = new Sphere(BigDecimal.valueOf(i), BigDecimal.TEN, 1);
-            shapeMap.put(shape.getId(), shape);
+            if (i % 10 == 0) {
+                saveShapes2DB.accept(getFlatShape.get());
+            } else {
+                saveShapes2DB.accept(getVolumeShape.get());
+            }
         }
     }
 
-    private final IRefreshShape iRefreshShape = (ids -> {
+    private final IRefreshShape iRefreshShape = (shapes -> {
         try {
-            return getShapesByIdsFromDB(ids);
+            List<Optional<Shape>> result = new ArrayList<>();
+            Long[] idsFlat = Arrays.stream(shapes).filter(shape -> shape instanceof FlatShape)
+                    .map(Shape::getId).toArray(Long[]::new);
+            Long[] idsVolume = Arrays.stream(shapes).filter(shape -> shape instanceof VolumetricShape)
+                    .map(Shape::getId).toArray(Long[]::new);
+            if(idsFlat.length == 0 && idsVolume.length == 0) throw new CriticalException("Нет фигур для поиска");
+            else if(idsFlat.length > 0) result.addAll(getShapesByIdsFromDB(FlatShape.class, idsFlat));
+            else result.addAll(getShapesByIdsFromDB(VolumetricShape.class, idsVolume));
+            return result;
         } catch (NonCriticalException e) {
             return List.of(Optional.empty());
         } catch (Exception e) {
@@ -57,35 +103,26 @@ public class ShapeService {
         }
     });
 
-    public IRefreshShape getFuncRefresh(){
+    public IRefreshShape getFuncRefresh() {
         return iRefreshShape;
     }
-    @SneakyThrows(CriticalException.class)
-    public static List<Optional<Shape>> refreshShapesById(Long... ids) {
-        return iRefreshShape.refreshShapesById(ids);
-    }
+
 
     @SneakyThrows({NonCriticalException.class})
-    public List<Optional<Shape>> getShapesByIdsFromDB(Long... ids) {
-        if (ids.length == 0) throw new NonCriticalException("Не были запрошены идентификаторы для запроса в бд");
-        log.info("Запрошены фигуры с ид " + Arrays.toString(ids) + "из бд");
+    public List<Optional<Shape>> getShapesByIdsFromDB(Class<? extends Shape> cl, Long... ids) {
+        List<Optional<Shape>> result;
         List<Long> lostIds = new ArrayList<>();
-        List<Optional<Shape>> result = Arrays.stream(ids).map(id -> {
-                    if (Optional.ofNullable(shapeMap.get(id)).isEmpty()) {
-                        lostIds.add(id);
-                    }
-                    return Optional.ofNullable(shapeMap.get(id));
-                })
-                .toList();
+        log.info("Запрошены фигуры с ид " + Arrays.toString(ids) + " из бд");
+        result = getShapeFromDB(cl,lostIds,ids);
         if (lostIds.size() == ids.length) {
-            throw new NonCriticalException("Не найдена ни одна фигура: " + lostIds.toString());
+            throw new NonCriticalException("Не найдена ни одна фигура: " + lostIds);
         } else if (lostIds.size() > 0) {
-            log.info("Не найдены фигуры в бд: " + lostIds.toString());
+            log.info("Не найдены фигуры в бд: " + lostIds);
         }
         return result;
     }
 
-    private Shape getShapeByIdFromDB(Long id) {
+    public Shape getShapeByIdFromDB(Long id) {
         log.info("Запрошена фигура с ид " + id + "из бд");
         return Optional.ofNullable(shapeMap.get(id)).orElseThrow(() -> new NonCriticalException("Не найдено такой фигуры в бд"));
     }
@@ -118,7 +155,7 @@ public class ShapeService {
 
         //Перезапрашиваем с бд список просрочки и добавляем в кешу и ставим дату кеша актуальную для того что есть
         if (!refreshShapesDB.isEmpty()) {
-            cacheMap.putAll(getShapesByIdsFromDB(refreshShapesDB.stream().map(Shape::getId).toArray(Long[]::new)).stream()
+            cacheMap.putAll(iRefreshShape.refreshShapesById(refreshShapesDB.toArray(Shape[]::new)).stream()
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .peek(shape -> shape.setCachedTime(System.currentTimeMillis()))

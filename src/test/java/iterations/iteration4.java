@@ -1,30 +1,17 @@
 package iterations;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.example.iteration3.version1.exception.BadDataException;
-import org.example.iteration3.version1.exception.NullParamException;
 import org.example.iteration3.version1.model.Circle;
-import org.example.iteration3.version1.model.FlatShape;
 import org.example.iteration3.version1.model.Shape;
-import org.example.iteration3.version1.model.ShapeConstants;
-import org.example.iteration3.version1.model.Sphere;
-import org.example.iteration3.version1.model.Square;
 import org.example.iteration3.version1.service.ShapeService;
-import org.example.iteration4.IRefreshShape;
-import org.example.iteration4.exception.CriticalException;
-import org.example.iteration4.exception.NonCriticalException;
+import org.example.iteration4.service.BusinessShapeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-import java.io.File;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,17 +22,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Log4j2
+@Component
 public class iteration4 {
     Map<Long, Shape> shapeDB = ShapeService.shapeMap;
     Map<Long, Shape> cacheMap = ShapeService.cacheMap;
 
-
     //Функционаьный интерфейс, используется в многопоточке чтобы поток мог выполнить задачу что реализует run
     @Test
     public void testRunnable() {
+
         Runnable runnable = () -> {
             System.out.println("Я что-то выполняю - я полезный");
         };
@@ -57,7 +44,7 @@ public class iteration4 {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Я только что реализовал функциональный интерфейс Runnable.")
+                System.out.println("Я только что реализовал функциональный интерфейс Runnable.");
             }
         }).start();
 

@@ -17,6 +17,10 @@ public class Circle extends FlatShape implements IRound {
         super(calcArea(radius),calcPerimeter(radius), scale);
         this.radius = radius;
     }
+    public Circle(@NotNull BigDecimal radius, Integer scale) {
+        super(calcArea(radius),calcPerimeter(radius), scale);
+        this.radius = radius;
+    }
 
     @Override
     public @NotNull BigDecimal getRadius() {
