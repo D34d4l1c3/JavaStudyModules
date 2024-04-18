@@ -1,6 +1,7 @@
 package org.example.iteration3.version1.model;
 
 import lombok.Data;
+import lombok.Setter;
 import org.example.iteration2.javaCore.ITask.datamodel.DataModel;
 import org.example.iteration4.Model.Cacheable;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public abstract class Shape implements DataModel<Long>, Cacheable {
     private Long CachedTime;
 
     @Nullable
-    private final Integer scale;
+    private Integer scale;
     @NotNull
     private final Long id;
 

@@ -1,12 +1,12 @@
 package org.example.iteration3.version1.model;
 
+import lombok.NoArgsConstructor;
 import org.example.iteration3.version1.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
 import java.math.BigDecimal;
-
 public class Circle extends FlatShape implements IRound {
     @NotNull
     private final BigDecimal radius;

@@ -3,16 +3,21 @@ package iterations;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.example.iteration3.version1.model.Circle;
+import org.example.iteration3.version1.model.FlatShape;
 import org.example.iteration3.version1.model.Shape;
+import org.example.iteration3.version1.model.Sphere;
+import org.example.iteration3.version1.model.Square;
 import org.example.iteration3.version1.service.ShapeService;
-import org.example.iteration4.service.BusinessShapeService;
+import org.example.iteration4.JavaLikeDI.CustomApplicationContext;
+import org.example.iteration4.JavaLikeDI.PuzzleEl;
+import org.example.iteration4.JavaLikeDI.SimplePuzzle;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,14 +29,16 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @Log4j2
-@Component
+//@SpringBootTest
 public class iteration4 {
     Map<Long, Shape> shapeDB = ShapeService.shapeMap;
     Map<Long, Shape> cacheMap = ShapeService.cacheMap;
-
+//    @Autowired
+//    ShapeController shapeController;
     //Функционаьный интерфейс, используется в многопоточке чтобы поток мог выполнить задачу что реализует run
     @Test
     public void testRunnable() {
+//        log.info(shapeController);
 
         Runnable runnable = () -> {
             System.out.println("Я что-то выполняю - я полезный");
@@ -171,9 +178,9 @@ public class iteration4 {
         Shape testShape = shapeDB.get(10L);
 
         log.info(System.currentTimeMillis());
+        ShapeService.cacheShapesAndCalcSum(6000L, shapes);
         ShapeService.cacheShapes(6000L, shapes);
-        ShapeService.cacheShapes(6000L, shapes);
-        ShapeService.cacheShapes(6000L, shapes);
+        log.info(ShapeService.cacheShapesAndCalcSum(6000L, shapes));
         ShapeService.cacheShapes(6000L, shapes);
         Thread.sleep(2000);
         ShapeService.cacheShapes(6000L, shapes);
@@ -181,7 +188,7 @@ public class iteration4 {
         ShapeService.cacheShapes(6000L, shapes);
         Thread.sleep(4000);
         ShapeService.cacheShapes(6000L, shapes);
-        ShapeService.cacheShapes(6000L, shapes);
+        log.info(ShapeService.cacheShapesAndCalcSum(6000L, shapes));
 
 //        Optional<Shape> optShape = ShapeService.refreshShape(testShape);
 //        optShape.ifPresent(value -> log.info(value.toString()));
@@ -190,6 +197,72 @@ public class iteration4 {
 //        optShape= ShapeService.refreshShape(testShape);
 //        optShape.ifPresent(value -> log.info(value.toString()));
     }
+    @Test
+    public void testGeneric(){
 
+//        PECS — Producer Extends, Consumer Super. Его суть:
+//        Коллекции с wildcards и ключевым словом extends — это producers (производители, генераторы), они лишь предоставляют данные.
+//        Коллекции с wildcards и ключевым словом super — это consumers (потребители), они принимают данные, но не отдают их.
+
+//        Если контейнер объявлен с wildcard ? extends, то можно только читать значения.
+//        В список нельзя ничего добавить, кроме null. Для того чтобы добавить объект в список нам нужен другой тип wildcard — ? super
+
+//        Тип ограничения	    Что можно читать	                        Что можно записывать
+//      <? extends SomeType>	Объекты SomeType и всех его супертипов	    Только null
+//      <? super SomeType>	    Объекты типа Object	                        Объекты типа SomeType и всех его подтипов
+
+//        printShapesAreas(cacheMap.values());
+        Shape shape  = new Sphere(BigDecimal.TEN,BigDecimal.TEN,1);
+        Circle circle = new Circle(BigDecimal.TEN,1);
+
+        List<? extends Shape> listExtendsCircle = new ArrayList<>(); //может содержать объекты, класс которых является Shape или наследуется от Number
+        List<? super Shape> listSuperCircle = new ArrayList<>(); // может содержать объекты, класс которых Shape или у которых Shape является наследником (супертип от Shape).
+        listSuperCircle.add(shape);
+        listSuperCircle.add(circle);
+
+//        listExtendsCircle.add(shape); //ошибка
+
+
+
+        Shape getShape = (Shape) listSuperCircle.get(0);
+
+//        FlatShape t = new Circle(BigDecimal.TEN,2);
+//        listsuperCircle.add(t);
+        listSuperCircle.stream().map(Object::getClass).forEach(System.out::println);
+
+    }
+    public void printShapesAreas(List<? extends Shape> shapes){ //Предоставляет
+        shapes.stream().map(Shape::getArea).forEach(System.out::println);
+    }
+    public <T extends Shape> void printShapesAreas(List<? extends Shape> shapes, T t){ //Предоставляет
+        shapes.stream().map(Shape::getArea).forEach(System.out::println);
+    }
+
+    public Collection<? super FlatShape> superMethodShapes(List<? super FlatShape> flatShapes, Circle circle){ //Потребляет
+//        flatShapes.stream().map(Shape::getArea).forEach(System.out::println);
+//        FlatShape shape = (FlatShape) flatShapes.get(0);
+//        Circle circle1 = flatShapes.get(0);
+        flatShapes.add(circle);
+        flatShapes.add(new Square(BigDecimal.TEN,1));
+        log.info(flatShapes.stream().toList().get(0));
+        return flatShapes;
+    }
+    public Collection<? extends Shape> addCollectionShapes(Collection<? extends Shape> shapes,Shape shape){ //Пытается потреблять но не сможет?
+//        shapes.add(shape);
+        return shapes;
+    }
+    public Shape printShapesVolume(List<? super Circle> shape){
+        shape.add(new Circle(BigDecimal.TEN,1));
+        return (Shape) shape.get(0);
+    }
+    @Test
+    public void DICustomTest(){
+        SimplePuzzle simplePuzzle = CustomApplicationContext.getCustomBean("simplepuzle", SimplePuzzle.class);
+        SimplePuzzle simplePuzzle1 = CustomApplicationContext.getCustomBean("simplepuzle", SimplePuzzle.class);
+        PuzzleEl flatShapePrototype = CustomApplicationContext.getCustomBean("flatshape", PuzzleEl.class);
+        PuzzleEl flatShapePrototype1 = CustomApplicationContext.getCustomBean("flatshape", PuzzleEl.class);
+        log.info(simplePuzzle1 == simplePuzzle);
+
+    }
 
 }

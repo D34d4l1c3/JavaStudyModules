@@ -133,9 +133,16 @@ public class ShapeService {
                 .reduce(BigDecimal::add)
                 .orElseThrow();
     }
+    @SafeVarargs
+    public static <T extends Shape & Cacheable> BigDecimal cacheShapesAndCalcSum(long CACHE_TIME_MS, T... shapes){
+        List<Shape> res = cacheShapes(CACHE_TIME_MS,shapes);
+        res.forEach(x-> x.setScale(1));
+        return sumArea(res.toArray(Shape[]::new));
+
+    }
 
     @SafeVarargs
-    public static <T extends Shape & Cacheable> void cacheShapes(long CACHE_TIME_MS, T... shapes) {
+    public static <T extends Shape & Cacheable> List<Shape> cacheShapes(long CACHE_TIME_MS, T... shapes) {
         log.info("Вызвано кеширование");
 
         //Список просроченных и тех что нужно перезапросить
@@ -161,6 +168,7 @@ public class ShapeService {
                     .peek(shape -> shape.setCachedTime(System.currentTimeMillis()))
                     .collect(Collectors.toMap(Shape::getId, shape -> shape)));
         }
+        return cacheMap.values().stream().toList();
     }
 
     public static BigDecimal sumPerimeter(@NotNull FlatShape... shapes) {
