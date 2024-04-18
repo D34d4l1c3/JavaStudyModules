@@ -7,7 +7,7 @@ import org.example.iteration3.version1.model.FlatShape;
 import org.example.iteration3.version1.model.Shape;
 import org.example.iteration3.version1.model.Sphere;
 import org.example.iteration3.version1.model.Square;
-import org.example.iteration3.version1.service.ShapeService;
+import org.example.iteration4.service.ShapeService;
 import org.example.iteration4.JavaLikeDI.CustomApplicationContext;
 import org.example.iteration4.JavaLikeDI.PuzzleEl;
 import org.example.iteration4.JavaLikeDI.SimplePuzzle;
