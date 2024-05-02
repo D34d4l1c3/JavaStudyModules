@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.iteration3.version1.model.Shape;
 import org.example.iteration4.Model.FLatShapeMesh;
 import org.example.iteration4.Model.Place;
-import org.example.iteration4.property.SpringProperty;
+//import org.example.iteration4.property.SpringProperty;
 import org.example.iteration4.service.BusinessShapeService;
 import org.example.iteration4.service.MainUtils;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +21,7 @@ import java.lang.reflect.Proxy;
 @AllArgsConstructor
 public class ShapeController {
     BusinessShapeService businessShapeService; //Внедрено через конструктор
-    SpringProperty springProperty;
+//    SpringProperty springProperty;
     MainUtils mainUtils;
     FLatShapeMesh fLatShapeMesh1;
     @GetMapping("/{id}")
@@ -38,7 +38,7 @@ public class ShapeController {
         BusinessShapeService businessShapeService1 = context.getBean(BusinessShapeService.class);
         BusinessShapeService businessShapeService2 = context.getBean(BusinessShapeService.class);
         Place place = context.getBean(Place.class);
-        Boolean test = springProperty.getTestProperty();
+//        Boolean test = springProperty.getTestProperty();
 //        InvocationHandler handler = Proxy.getInvocationHandler(fLatShapeMesh1);
 //        InvocationHandler handler1 = Proxy.getInvocationHandler(businessShapeService1);
         Integer i1 = fLatShapeMesh2.getInteger2();
