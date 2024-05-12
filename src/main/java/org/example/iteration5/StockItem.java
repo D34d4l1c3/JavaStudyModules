@@ -33,11 +33,6 @@ public class StockItem {
 
     public void buy() {
         if (count > 0) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
             count--;
             countBuy++;
             countBuyAtomic = atomicCountBuy.incrementAndGet();

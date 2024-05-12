@@ -1,12 +1,15 @@
 package org.example.iteration4.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 import org.example.iteration3.version1.model.Shape;
 import org.example.iteration4.Model.FLatShapeMesh;
 import org.example.iteration4.Model.Place;
 //import org.example.iteration4.property.SpringProperty;
 import org.example.iteration4.service.BusinessShapeService;
 import org.example.iteration4.service.MainUtils;
+import org.example.iteration5.ConcurrentCatalogService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,15 +18,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping("/shapes")
 @AllArgsConstructor
+@Log
 public class ShapeController {
     BusinessShapeService businessShapeService; //Внедрено через конструктор
 //    SpringProperty springProperty;
     MainUtils mainUtils;
     FLatShapeMesh fLatShapeMesh1;
+
     @GetMapping("/{id}")
     public Shape findShapeById(@PathVariable long id) {
         return businessShapeService.getShapeById(id);
