@@ -74,7 +74,9 @@ public class iteration4 {
 
     }
 
-
+Optional<String> getTest(){
+        return null;
+}
 
 //     ------ Function ------
 //     Принимает один аргумент и выдает результат.
@@ -82,6 +84,7 @@ public class iteration4 {
 //     Одним из распространенных вариантов использования этого интерфейса является метод Stream.map.
     @Test
     public void testFunction(){
+        log.info(getTest().orElse("Banana"));
         Function<Shape,BigDecimal> shapeBigDecimalFunction = Shape::getArea;
         List<BigDecimal> shapeAreas = shapeDB.values().stream()
                 //Вот тут функция
@@ -134,6 +137,7 @@ public class iteration4 {
 
         Supplier<Long> integerSupplier = () -> 1L;
         Supplier<String> stringSupplier = () -> "куку";
+//        stringSupplier.
 //      В отличие от методов, функции существуют сами по себе без привязки к классу.
 
 //      Одно из основных применений этого интерфейса это использование для включения отложенного выполнения.
@@ -159,8 +163,11 @@ public class iteration4 {
         };
         Consumer<List<String>> sayAllHello = listNames -> listNames.forEach(System.out::println);
         Consumer<List<String>> calcLength = stringList -> stringList.forEach(string -> System.out.println("Длинна строки: " + string + " равна " + string.length()));
-//        helloNameConsumer.andThen(sayAllHello).accept(names);
-        helloNameConsumer.andThen(sayAllHello).andThen(calcLength).accept(names);
+       helloNameConsumer.andThen(sayAllHello).accept(names);
+        helloNameConsumer
+                .andThen(sayAllHello)
+                .andThen(calcLength)
+                .accept(names);
 
         Consumer<Shape> shapeConsumerId = Shape::getArea;
         Optional<Shape> optionalShape = Optional.of(new Circle(BigDecimal.TEN, 10, 0));

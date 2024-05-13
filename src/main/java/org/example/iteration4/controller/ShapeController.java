@@ -3,11 +3,17 @@ package org.example.iteration4.controller;
 import lombok.AllArgsConstructor;
 import org.example.iteration3.version1.model.Shape;
 import org.example.iteration4.Model.FLatShapeMesh;
+import org.example.iteration4.Model.ITestBeanInterface;
 import org.example.iteration4.Model.Place;
+import org.example.iteration4.Model.TestBean;
+import org.example.iteration4.Model.duplicate.TestBean2;
 import org.example.iteration4.property.SpringProperty;
 import org.example.iteration4.service.BusinessShapeService;
 import org.example.iteration4.service.MainUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +24,26 @@ import java.lang.reflect.Proxy;
 
 @RestController
 @RequestMapping("/shapes")
-@AllArgsConstructor
 public class ShapeController {
     BusinessShapeService businessShapeService; //Внедрено через конструктор
     SpringProperty springProperty;
     MainUtils mainUtils;
     FLatShapeMesh fLatShapeMesh1;
+
+    public ShapeController(BusinessShapeService businessShapeService,
+                           SpringProperty springProperty,
+                           MainUtils mainUtils,
+                           FLatShapeMesh fLatShapeMesh1,
+                           @Qualifier("reTestBean2") ITestBeanInterface iTestBeanInterface) {
+        this.businessShapeService = businessShapeService;
+        this.springProperty = springProperty;
+        this.mainUtils = mainUtils;
+        this.fLatShapeMesh1 = fLatShapeMesh1;
+        this.iTestBeanInterface = iTestBeanInterface;
+    }
+
+    ITestBeanInterface iTestBeanInterface;
+//    TestBean testBean;
     @GetMapping("/{id}")
     public Shape findShapeById(@PathVariable long id) {
         return businessShapeService.getShapeById(id);
@@ -32,6 +52,9 @@ public class ShapeController {
     public String testController() {
         ApplicationContext context = mainUtils.getApplicationContext();
         int b = 4;
+        iTestBeanInterface.getTests();
+        TestBean2 testBean1 = context.getBean(TestBean2.class);
+//        TestBean testBean2 = context.getBean(TestBean.class,"Banana1");
         FLatShapeMesh fLatShapeMesh =  context.getBean(FLatShapeMesh.class);
         FLatShapeMesh fLatShapeMesh1 =  context.getBean(FLatShapeMesh.class);
         FLatShapeMesh fLatShapeMesh2 = new FLatShapeMesh();
