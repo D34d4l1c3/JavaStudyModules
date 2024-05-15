@@ -28,10 +28,12 @@ public class FLatShapeMesh {
     @Getter
     FLatShapeMesh fLatShapeMesh;
     private String name;
+
     List<? extends FlatShape> flatShapes;
-//    @Autowired
-//    @Qualifier("reTestBean2")
-//    ITestBeanInterface iTestBeanInterface;  //Field iTestBeanInterface in org.example.iteration4.Model.FLatShapeMesh required a single bean, but 2 were found:
+
+    @Autowired
+    @Qualifier("reTestBean2")
+    ITestBeanInterface iTestBeanInterface;  //Field iTestBeanInterface in org.example.iteration4.Model.FLatShapeMesh required a single bean, but 2 were found:
 
     @PostConstruct
     public void initShapeService() {
