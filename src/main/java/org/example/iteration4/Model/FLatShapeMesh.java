@@ -3,6 +3,7 @@ package org.example.iteration4.Model;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.example.iteration3.version1.model.FlatShape;
 import org.example.iteration4.Model.duplicate.TestBean3;
 import org.jetbrains.annotations.Async;
@@ -24,6 +25,7 @@ public class FLatShapeMesh {
 
     @Autowired
     @Lazy
+    @Getter
     FLatShapeMesh fLatShapeMesh;
     private String name;
     List<? extends FlatShape> flatShapes;
@@ -49,7 +51,7 @@ public class FLatShapeMesh {
         return i;
     }
 
-//    @Transactional
+    //    @Transactional
     public Integer getInteger2() {
         return fLatShapeMesh.getInteger(1); //падает в цикле зависимости на себя
 //        return getInteger(1);

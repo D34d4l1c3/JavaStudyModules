@@ -1,8 +1,10 @@
-package org.example.iteration5;
+package org.example.iteration5.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
+import org.example.iteration5.ConcurrentCatalogService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/catalog")
 @AllArgsConstructor
 @Log
+@Profile("dev")
 public class ConcurrentBuyController {
     static AtomicInteger sumAllBuying = new AtomicInteger(0);
     static List<Future<Integer>> futureCall = new ArrayList<>();
@@ -38,7 +41,8 @@ public class ConcurrentBuyController {
 
 //        concurrentCatalogService.invokeCalcAllSum();
         ;
-        futureCall.add(concurrentCatalogService.byAsyncAllCatalog());
+//        futureCall.add(concurrentCatalogService.byAsyncAllCatalog());
+//        concurrentCatalogService.byAsyncAllCatalog();
         log.info(Thread.currentThread().getName() + "------- End ---------");
         return "End Request";
     }

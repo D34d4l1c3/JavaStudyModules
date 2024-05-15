@@ -12,16 +12,24 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.StampedLock;
 import java.util.stream.IntStream;
 
 @Service
 @Log4j2
 public class ConcurrentCatalogService {
-    final int MAX_STOCK_ITEMS = 100;
+    final int MAX_STOCK_ITEMS = 50;
     final int MAX_STOCK_ITEM_COUNT = 6;
-    final int MIN_STOCK_ITEM_COUNT = 2;
-    final int CNT_THREADS = 20;
+    final int MIN_STOCK_ITEM_COUNT = 0;
+    final int CNT_THREADS = 100;
     final Random random = new Random();
+
+
+    @Getter
+    final StampedLock lock = new StampedLock();
+    //new ReentrantLock();
 
     @Getter
     private final ConcurrentHashMap<Integer, StockItem> charityStock = new ConcurrentHashMap<Integer, StockItem>();
@@ -135,28 +143,6 @@ public class ConcurrentCatalogService {
         TimeUnit.SECONDS.sleep(10);
         return 1;
     }
-//    @Async
-//    public Future<Integer> testByAsyncInvokes() {
-//
-//
-//
-//        List<Future<Integer>> futureList = new ArrayList<>();
-//        log.info("Запуск testByAsyncInvokes");
-//        IntStream.range(0, 10).forEach(i -> {
-//            futureList.add(CompletableFuture.supplyAsync(this::testByAsync));
-//        });
-//        log.info("Запустили ожидаем результат");
-////        return futureList.stream().map(i -> {
-////            Integer res = 0;
-////            try {
-////                res = i.get();
-////            } catch (InterruptedException | ExecutionException e) {
-////                throw new RuntimeException(e);
-////            }
-////            return res;
-////        }).reduce(0, Integer::sum);
-//        return new AsyncResult<>(1);
-//    }
 
     public Map<Callable<Integer>, Integer> testCallableCatalogWithResMap() {
         log.info("Вызываю callable");
@@ -180,23 +166,29 @@ public class ConcurrentCatalogService {
     }
 
     @SneakyThrows
-    public synchronized boolean buyItem(Map<Integer, StockItem> catalog, StockItem stockItem) {
-        Integer key = stockItem.getId();
-        Thread.sleep(new Random().nextInt(100));
-        AtomicBoolean res = new AtomicBoolean(false);
-        Optional.of(stockItem).ifPresent(item -> {
-            if (item.getCount() > 0) {
-                item.buy();
-                log.info(Thread.currentThread().getName() + " Покупаю " + item + " осталось " + item.getCount());
-                res.set(true);
-            } else {
-                if (item.getCount() < 0) log.info("Отрциательные значения " + item);
-                catalog.remove(key);
-                log.info(Thread.currentThread().getName() + " " + key + " кончился - убираю из каталога");
-                res.set(false);
-            }
-        });
-        return res.get();
+    public boolean buyItem(Map<Integer, StockItem> catalog, StockItem stockItem) { //synhronize или лок
+        lock.asReadWriteLock();
+        try {
+            Integer key = stockItem.getId();
+            Thread.sleep(new Random().nextInt(100));
+            AtomicBoolean res = new AtomicBoolean(false);
+            Optional.of(stockItem).ifPresent(item -> {
+                if (item.getCount() > 0) {
+                    item.buy();
+                    log.info(Thread.currentThread().getName() + " Покупаю " + item + " осталось " + item.getCount());
+                    res.set(true);
+                } else {
+                    if (item.getCount() < 0) log.info("Отрциательные значения " + item);
+                    catalog.remove(key);
+                    log.info(Thread.currentThread().getName() + " " + key + " кончился - убираю из каталога");
+                    res.set(false);
+                }
+            });
+            return res.get();
+        }
+        finally {
+            lock.unlock(1);
+        }
     }
 
     @SneakyThrows

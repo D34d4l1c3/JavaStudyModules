@@ -17,7 +17,7 @@ public class RunnableFactorial {
         Future future = executorService.submit(factorial);
         executorService.shutdown();
         System.out.println("Таск закогчен? "+future.isDone());
-        executorService.awaitTermination(10, TimeUnit.SECONDS); //Ждет либо 10 сек либо окончание потоков всех
+        executorService.awaitTermination(1, TimeUnit.SECONDS); //Ждет либо 10 сек либо окончание потоков всех
         System.out.println(future.get());
         System.out.println("Таск закогчен? "+future.isDone());
         System.out.println(factorialResult);
@@ -28,8 +28,10 @@ public class RunnableFactorial {
 class Factorial implements Runnable {
     int f;
 
+    @SneakyThrows
     @Override
     public void run() {
+        Thread.sleep(5000);
         if (f <= 0) {
             System.out.println("плохое число");
             //Нельзя эксепшены выбрасывать а callable может

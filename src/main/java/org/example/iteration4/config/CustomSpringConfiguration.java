@@ -1,6 +1,8 @@
 package org.example.iteration4.config;
 
 import org.example.iteration4.Model.Building;
+import org.example.iteration4.Model.ITestBeanInterface;
+import org.example.iteration4.Model.ITestBeanInterface2;
 import org.example.iteration4.Model.Place;
 //import org.example.iteration4.Model.duplicate.TestBean;
 import org.example.iteration4.Model.TestBean;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class CustomSpringConfiguration {
+
     @Bean
     @Scope("prototype")
     public Place place() {
@@ -28,10 +31,24 @@ public class CustomSpringConfiguration {
         return new TestBean2(new TestBean());
     }
 
-//    @Bean
-//    TestBean getTestBean() {
-//        return new TestBean("_conf");
-//    }
+    @Bean
+    TestBean3 getTestBean3(@Value("${test.bean.enabled}") Boolean propCond) {
+        if (propCond) return new TestBean3("0");
+        else return new TestBean3("1");
+    }
+    @Bean
+    ITestBeanInterface2 getTestBeanI(@Value("${test.bean.enabled}") Boolean propCond) {
+        if (propCond) {
+            return new TestBean3("0");
+        } else {
+            return new TestBean2(new TestBean());
+        }
+    }
+    @Bean
+    TestBean3 getTestBean3Sec() {
+        return new TestBean3("2");
+    }
+
 //    @Bean
 //    TestBean getTestBeanSec() {
 //        return new TestBean("_configure");

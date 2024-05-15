@@ -7,9 +7,10 @@ import org.example.iteration4.Model.ITestBeanInterface;
 import org.example.iteration4.Model.Place;
 import org.example.iteration4.Model.TestBean;
 import org.example.iteration4.Model.duplicate.TestBean2;
-import org.example.iteration4.property.SpringProperty;
+import org.example.iteration4.Model.duplicate.TestBean3;
 import org.example.iteration4.service.BusinessShapeService;
 import org.example.iteration4.service.MainUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -26,17 +27,17 @@ import java.lang.reflect.Proxy;
 @RequestMapping("/shapes")
 public class ShapeController {
     BusinessShapeService businessShapeService; //Внедрено через конструктор
-    SpringProperty springProperty;
     MainUtils mainUtils;
     FLatShapeMesh fLatShapeMesh1;
+    @Autowired
+    @Qualifier("getTestBean3Sec")
+    TestBean3 testBean3;
 
     public ShapeController(BusinessShapeService businessShapeService,
-                           SpringProperty springProperty,
                            MainUtils mainUtils,
                            FLatShapeMesh fLatShapeMesh1,
                            @Qualifier("reTestBean2") ITestBeanInterface iTestBeanInterface) {
         this.businessShapeService = businessShapeService;
-        this.springProperty = springProperty;
         this.mainUtils = mainUtils;
         this.fLatShapeMesh1 = fLatShapeMesh1;
         this.iTestBeanInterface = iTestBeanInterface;
@@ -54,24 +55,26 @@ public class ShapeController {
         int b = 4;
         iTestBeanInterface.getTests();
         TestBean2 testBean1 = context.getBean(TestBean2.class);
+        TestBean3 testBean3 = context.getBean("getTestBean3Sec", TestBean3.class);
+        TestBean3 testBean3_1 = context.getBean("getTestBean3", TestBean3.class);
+        FLatShapeMesh t = fLatShapeMesh1.getFLatShapeMesh();
 //        TestBean testBean2 = context.getBean(TestBean.class,"Banana1");
         FLatShapeMesh fLatShapeMesh =  context.getBean(FLatShapeMesh.class);
-        FLatShapeMesh fLatShapeMesh1 =  context.getBean(FLatShapeMesh.class);
-        FLatShapeMesh fLatShapeMesh2 = new FLatShapeMesh();
-        BusinessShapeService businessShapeService1 = context.getBean(BusinessShapeService.class);
-        BusinessShapeService businessShapeService2 = context.getBean(BusinessShapeService.class);
-        Place place = context.getBean(Place.class);
-        Boolean test = springProperty.getTestProperty();
+//        FLatShapeMesh fLatShapeMesh1 =  context.getBean(FLatShapeMesh.class);
+//        FLatShapeMesh fLatShapeMesh2 = new FLatShapeMesh();
+//        BusinessShapeService businessShapeService1 = context.getBean(BusinessShapeService.class);
+//        BusinessShapeService businessShapeService2 = context.getBean(BusinessShapeService.class);
+//        Place place = context.getBean(Place.class);
 //        InvocationHandler handler = Proxy.getInvocationHandler(fLatShapeMesh1);
 //        InvocationHandler handler1 = Proxy.getInvocationHandler(businessShapeService1);
-        Integer i1 = fLatShapeMesh2.getInteger2();
-        Integer i2 = fLatShapeMesh2.getInteger(1);
-        Integer i3 = fLatShapeMesh.getInteger(1);
-        Integer i4 = fLatShapeMesh.getInteger2();
-        Integer i5 = fLatShapeMesh1.getInteger(1);
-        Integer i6 = fLatShapeMesh1.getInteger2();
-        businessShapeService1.getInteger();
-        businessShapeService1.getInteger2();
+//        Integer i1 = fLatShapeMesh2.getInteger2();
+//        Integer i2 = fLatShapeMesh2.getInteger(1);
+//        Integer i3 = fLatShapeMesh.getInteger(1);
+//        Integer i4 = fLatShapeMesh.getInteger2();
+//        Integer i5 = fLatShapeMesh1.getInteger(1);
+//        Integer i6 = fLatShapeMesh1.getInteger2();
+//        businessShapeService1.getInteger();
+//        businessShapeService1.getInteger2();
         int c = 4;
         return "1";
     }

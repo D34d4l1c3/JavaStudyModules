@@ -46,8 +46,11 @@ public class iteration5 {
     @SneakyThrows
     @Test
     public void testCollectionThreads() {
-//        //С помощью создания новых тредов самостоятельно
-//        concurrentCatalogService.testThreadsCatalog();
+        //С помощью создания новых тредов самостоятельно
+        concurrentCatalogService.testThreadsCatalog(); //Без синхронайз можно получить отрицательные иногда
+//        boolean b = concurrentCatalogService.getLock().newCondition().await(5,TimeUnit.SECONDS);
+//        log.info(b);
+
 //        //C возвращаемым результатом через вызовы Callable
 //        Map<Callable<Integer>, Integer> resCall = concurrentCatalogService.testCallableCatalogWithResMap();
 //        log.info("Всего было вызовов " + resCall.values().stream().reduce(0, Integer::sum));
