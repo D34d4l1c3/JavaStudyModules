@@ -34,6 +34,7 @@ public class iteration5 {
     @Autowired
     ExportClientService exportClientService;
 
+    @SneakyThrows
     @Test
     public void testCSVExport() {
 
@@ -41,17 +42,25 @@ public class iteration5 {
 ////        Future<Integer> t2 = concurrentCatalogService.testByAsync();
 ////        Future<Integer> t3 = concurrentCatalogService.testByAsync();
 
-        List<Contact> list = exportClientService.queryContactList();
-        List<List<Contact>> separatedList = new ArrayList<>();
-        int chunkSize = (int) Math.ceil(list.size() / 10.);
-        IntStream.range(1, 10)
-                .forEach(i -> separatedList.add(list.subList(i * chunkSize, Math.min((i + 1) * chunkSize, list.size()))));
+        FutureTask<String> futureTask = new FutureTask<String>(() -> {
+            MyUtils.sleep(1000);
+            return "testFuture";
+        });
 
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        new Thread(futureTask).start();
+        log.info(futureTask.get());
 
-        separatedList.forEach(l -> executorService.submit(() -> exportClientService.writeContacts(l)));
-        int b = 4;
-        MyUtils.sleep(10000);
+//        List<Contact> list = exportClientService.queryContactList();
+//        List<List<Contact>> separatedList = new ArrayList<>();
+//        int chunkSize = (int) Math.ceil(list.size() / 10.);
+//        IntStream.range(1, 10)
+//                .forEach(i -> separatedList.add(list.subList(i * chunkSize, Math.min((i + 1) * chunkSize, list.size()))));
+//
+//        ExecutorService executorService = Executors.newFixedThreadPool(10);
+//
+//        separatedList.forEach(l -> executorService.submit(() -> exportClientService.writeContacts(l)));
+//        int b = 4;
+//        MyUtils.sleep(10000);
     }
 
 
@@ -120,7 +129,7 @@ public class iteration5 {
     @SneakyThrows
     @Test
     public void testCollectionThreads() {
-         //С помощью создания новых тредов самостоятельно
+        //С помощью создания новых тредов самостоятельно
         concurrentCatalogService.testThreadsCatalog(); //Без синхронайз можно получить отрицательные иногда
 //        boolean b = concurrentCatalogService.getLock().newCondition().await(5,TimeUnit.SECONDS);
 //        log.info(b);
@@ -199,7 +208,52 @@ public class iteration5 {
         threads.forEach(MyUtils::joinT);
     }
 
+    @Test
+    void testPublish() throws InterruptedException {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        MessageQueue<String> messageQueue = new MessageQueue<>();
+        final int CNT_MSG = 50;
 
+        Runnable publisher = () -> {
+            for (int i = 0; i < CNT_MSG; i++) {
+                log.info(messageQueue.getQueue().size());
+                String message = "Отправляем сообщение номер: " + i;
+                MyUtils.clog("Отправлено "+message);
+                messageQueue.publish(message);
+//                messageQueue.publishSimple(message);
+                MyUtils.sleep(1);
+            }
+        };
+        Runnable messageReceiver = () -> {
+            for (int i = 0; i < CNT_MSG || !messageQueue.getQueue().isEmpty(); i++) {
+                log.info(messageQueue.getQueue().size());
+                try {
+                    String message = messageQueue.receive();
+                    MyUtils.clog("Получено сообщение:" + message);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
+        Future<?> t = executorService.submit(publisher);
+        executorService.submit(messageReceiver);
+//        executorService.submit(messageReceiver);
+//        try {
+//            t.get();
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
+        MyUtils.sleep(10000);
+
+//        publisher.start();
+//        worker1.start();
+//        worker2.start();
+
+//        publisher.join();
+//        worker1.join();
+//        worker2.join();
+    }
     @SneakyThrows
     @Test
     public void testScheduledAndCachedExecutors() {
@@ -234,20 +288,21 @@ public class iteration5 {
 //        scheduledExecutorService.shutdown();// В тестах не очень надо в случае с scheduleAtFixedRate нужно ждать
 
     }
+
     @SneakyThrows
     @Test
-    public void testParallelStream(){
+    public void testParallelStream() {
         List<Solder> solders = new ArrayList<>();
         Random random = new Random();
 
-        Function<Solder,Integer> function = (s) ->{
+        Function<Solder, Integer> function = (s) -> {
             MyUtils.sleep(1);
-            MyUtils.clog("Я атакую на "+s.getDamage());
+            MyUtils.clog("Я атакую на " + s.getDamage());
             return s.getDamage();
         };
         log.info(ForkJoinPool.getCommonPoolParallelism() + 1);         //Вычисляем количество потоков? эмпирически parallelStream 23 потока и мейн, тут 24
-        log.info(Runtime.getRuntime().availableProcessors() -1);
-        IntStream.range(0, 100000).forEach(i -> solders.add(new Solder(random.nextInt(9)+1)));
+        log.info(Runtime.getRuntime().availableProcessors() - 1);
+        IntStream.range(0, 100000).forEach(i -> solders.add(new Solder(random.nextInt(9) + 1)));
         long t = System.currentTimeMillis();
 
 
@@ -266,7 +321,7 @@ public class iteration5 {
             protected boolean exec() {
                 Map<Integer, List<Solder>> solderMap2 = solders.stream()
                         .parallel()
-                        .collect(Collectors.groupingBy(function,Collectors.toList()));
+                        .collect(Collectors.groupingBy(function, Collectors.toList()));
 
                 System.out.println("Я закончил мапу составлять");
                 return true;
@@ -281,10 +336,9 @@ public class iteration5 {
 //        MyUtils.sleep(100000);
 
 
-
 //        Map<Integer, List<Solder>> solderMap = solders.parallelStream().collect(Collectors.groupingBy(function,Collectors.toList()));
 
-        log.info("Время выполнения - "+ (System.currentTimeMillis()-t)/1000);
+        log.info("Время выполнения - " + (System.currentTimeMillis() - t) / 1000);
         int b = 4;
     }
 }
