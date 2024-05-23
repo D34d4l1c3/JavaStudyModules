@@ -39,9 +39,10 @@ public class ConcurrentBuyController {
 //        concurrentCatalogService.testNonAsync();
 //        concurrentCatalogService.testNonAsync();
 
-//        concurrentCatalogService.invokeCalcAllSum();
-        ;
-//        futureCall.add(concurrentCatalogService.byAsyncAllCatalog());
+        //  concurrentCatalogService.invokeCalcAllSum();
+        // или
+        futureCall.add(concurrentCatalogService.byAsyncAllCatalog());
+
 //        concurrentCatalogService.byAsyncAllCatalog();
         log.info(Thread.currentThread().getName() + "------- End ---------");
         return "End Request";
