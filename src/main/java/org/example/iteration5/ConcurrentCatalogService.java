@@ -26,9 +26,9 @@ public class ConcurrentCatalogService {
     final int CNT_THREADS = 100;
     final Random random = new Random();
 
-
     @Getter
-    final StampedLock lock = new StampedLock();
+    final ReentrantLock lock = new ReentrantLock();
+            //new StampedLock();
     //new ReentrantLock();
 
     @Getter
@@ -167,7 +167,7 @@ public class ConcurrentCatalogService {
 
     @SneakyThrows
     public boolean buyItem(Map<Integer, StockItem> catalog, StockItem stockItem) { //synhronize или лок
-        lock.asReadWriteLock();
+        lock.lock();
         try {
             Integer key = stockItem.getId();
             Thread.sleep(new Random().nextInt(100));
@@ -187,7 +187,7 @@ public class ConcurrentCatalogService {
             return res.get();
         }
         finally {
-            lock.unlock(1);
+            lock.unlock();
         }
     }
 

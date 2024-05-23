@@ -49,9 +49,9 @@ public class ConcurrentBuyController {
     @GetMapping("/testAsync/")
     public String testAsync() {
         log.info(Thread.currentThread().getName() + "------ Start -------");
-//        Future<Integer> t = concurrentCatalogService.testByAsync();
-//        Future<Integer> t2 = concurrentCatalogService.testByAsync();
-//        Future<Integer> t3 = concurrentCatalogService.testByAsync();
+        Future<Integer> t = concurrentCatalogService.testByAsync();
+        Future<Integer> t2 = concurrentCatalogService.testByAsync();
+        Future<Integer> t3 = concurrentCatalogService.testByAsync();
 //        t.get();
 //        t2.get();
 //        t3.get();
