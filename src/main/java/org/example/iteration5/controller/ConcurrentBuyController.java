@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import org.example.iteration5.ConcurrentCatalogService;
+import org.example.utils.MyUtils;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,37 +20,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/catalog")
 @AllArgsConstructor
 @Log
-@Profile("dev")
+//@Profile("dev")
 public class ConcurrentBuyController {
     static AtomicInteger sumAllBuying = new AtomicInteger(0);
     static List<Future<Integer>> futureCall = new ArrayList<>();
     ConcurrentCatalogService concurrentCatalogService;
+    ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @SneakyThrows
     @GetMapping("/buyAll/")
     public String testThreadController() {
 //        concurrentCatalogService.testByAsyncInvokes();
-        log.info(Thread.currentThread().getName() + "------ Start -------");
-//        Future<Integer> t = concurrentCatalogService.testByAsync();
-//        Future<Integer> t2 = concurrentCatalogService.testByAsync();
-//        Future<Integer> t3 = concurrentCatalogService.testByAsync();
-//        t.get();
-//        t2.get();
-//        t3.get();
-//        concurrentCatalogService.testNonAsync();
-//        concurrentCatalogService.testNonAsync();
-//        concurrentCatalogService.testNonAsync();
-
-        //  concurrentCatalogService.invokeCalcAllSum();
-        // или
-        futureCall.add(concurrentCatalogService.byAsyncAllCatalog());
-
-//        concurrentCatalogService.byAsyncAllCatalog();
-        log.info(Thread.currentThread().getName() + "------- End ---------");
-        return "End Request";
-    }
-    @GetMapping("/testAsync/")
-    public String testAsync() {
         log.info(Thread.currentThread().getName() + "------ Start -------");
         Future<Integer> t = concurrentCatalogService.testByAsync();
         Future<Integer> t2 = concurrentCatalogService.testByAsync();
@@ -60,8 +42,32 @@ public class ConcurrentBuyController {
 //        concurrentCatalogService.testNonAsync();
 //        concurrentCatalogService.testNonAsync();
 
-//        concurrentCatalogService.invokeCalcAllSum();
-        ;
+        //  concurrentCatalogService.invokeCalcAllSum();
+        // или
+//        futureCall.add(concurrentCatalogService.byAsyncAllCatalog());
+
+//        concurrentCatalogService.byAsyncAllCatalog();
+        log.info(Thread.currentThread().getName() + "------- End ---------");
+        return "End Request";
+    }
+    @GetMapping("/testAsync/")
+    public String testAsync() {
+        log.info(Thread.currentThread().getName() + "------ Start -------");
+//        Future<Integer> t = concurrentCatalogService.testByAsync();
+//        Future<Integer> t2 = concurrentCatalogService.testByAsync();
+//        Future<Integer> t3 = concurrentCatalogService.testByAsync();
+//        t.get();
+//        t2.get();
+//        t3.get();
+//        concurrentCatalogService.testNonAsync();
+//        concurrentCatalogService.testNonAsync();
+//        concurrentCatalogService.testNonAsync();
+        MyUtils.clog("sdfaxsds");
+        int c =4;
+//        for(int i = 0;i<100;i++){
+//            concurrentCatalogService.byAsync1();
+//        }
+
         log.info(Thread.currentThread().getName() + "------- End ---------");
         return "End Request";
     }

@@ -185,7 +185,7 @@ public class iteration5 {
 
 //        ForkJoinTask<Integer> forkJoinTask = () -> 1;
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        List<Integer> init = IntStream.range(0, 20).boxed().toList();
+        List<Integer> init = IntStream.range(0, 50).boxed().toList();
         System.out.println(init);
 
         CRecursiveTask cRecursiveTask = new CRecursiveTask(init);
@@ -209,8 +209,8 @@ public class iteration5 {
     }
 
     @Test
-    void testPublish() throws InterruptedException {
-        ExecutorService executorService = Executors.newCachedThreadPool();
+    void testPublishQueue(){
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         MessageQueue<String> messageQueue = new MessageQueue<>();
         final int CNT_MSG = 50;
 
@@ -219,40 +219,29 @@ public class iteration5 {
                 log.info(messageQueue.getQueue().size());
                 String message = "Отправляем сообщение номер: " + i;
                 MyUtils.clog("Отправлено "+message);
-                messageQueue.publish(message);
-//                messageQueue.publishSimple(message);
-                MyUtils.sleep(1);
+//                messageQueue.publish(message);
+                messageQueue.publishSimple(message);
+                MyUtils.sleep(100);
             }
         };
         Runnable messageReceiver = () -> {
             for (int i = 0; i < CNT_MSG || !messageQueue.getQueue().isEmpty(); i++) {
                 log.info(messageQueue.getQueue().size());
-                try {
-                    String message = messageQueue.receive();
-                    MyUtils.clog("Получено сообщение:" + message);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                String message = messageQueue.receive();
+                MyUtils.clog("Получено сообщение:" + message);
             }
         };
 
         Future<?> t = executorService.submit(publisher);
         executorService.submit(messageReceiver);
-//        executorService.submit(messageReceiver);
-//        try {
-//            t.get();
-//        } catch (ExecutionException e) {
-//            throw new RuntimeException(e);
-//        }
+        executorService.submit(messageReceiver);
+        executorService.submit(messageReceiver);
+        executorService.submit(messageReceiver);
+        executorService.submit(messageReceiver);
+
+
         MyUtils.sleep(10000);
 
-//        publisher.start();
-//        worker1.start();
-//        worker2.start();
-
-//        publisher.join();
-//        worker1.join();
-//        worker2.join();
     }
     @SneakyThrows
     @Test

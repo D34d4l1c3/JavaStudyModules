@@ -1,6 +1,7 @@
 package org.example.iteration5;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.example.utils.MyUtils;
 
 import java.util.LinkedList;
@@ -13,8 +14,8 @@ public class MessageQueue<T> {
 
     @Getter
     private Queue<T> queue = new LinkedList<>();
-    private Lock lock = new ReentrantLock();
-    private Condition hasMessages = lock.newCondition();
+    private final Lock lock = new ReentrantLock();
+    private final Condition hasMessages = lock.newCondition();
 
     public void publish(T message) {
         lock.lock();
@@ -25,15 +26,17 @@ public class MessageQueue<T> {
             lock.unlock();
         }
     }
+
     public void publishSimple(T message) {
         queue.offer(message);
-        hasMessages.signal();
+//        hasMessages.signal();
     }
 
-    public T receive() throws InterruptedException {
+    @SneakyThrows
+    public T receive() {
         lock.lock();
         try {
-            MyUtils.sleep(100); //предположим мы что-то долго делаем с вычитанным сообщением долго
+            MyUtils.sleep(300); //предположим мы что-то долго делаем с вычитанным сообщением долго
             while (queue.isEmpty()) {
                 hasMessages.await();
             }

@@ -32,7 +32,7 @@ public class CRecursiveTask extends RecursiveTask<Integer> {
         CRecursiveTask cRecursiveTaskFirst = new CRecursiveTask(integerList.subList(0,integerList.size()/2));
         CRecursiveTask cRecursiveTaskLast = new CRecursiveTask(integerList.subList(integerList.size()/2,integerList.size()));
         log.info(Thread.currentThread().getName()+" "+"Первый подмассив: "+cRecursiveTaskFirst.integerList.size()+" Второй подмассив "+cRecursiveTaskLast.integerList.size());
-        Thread.sleep(1000);
+//        Thread.sleep(1000);
         cRecursiveTaskFirst.fork();
         cRecursiveTaskLast.fork();
         Integer res = cRecursiveTaskFirst.join()+ cRecursiveTaskLast.join();
