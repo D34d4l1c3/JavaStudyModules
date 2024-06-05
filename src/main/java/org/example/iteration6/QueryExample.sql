@@ -72,6 +72,7 @@ select count(b.id) as pop_bc, b.id, max(b.name),b.type as bk_name
         where r.start_date >= current_date - interval '3 months'
        group by b.type,b.id
        order by b.type,pop_bc desc;
+--тут не уверена позже посмотреть
 
 
 -- выбрать 10 наиболее популярных авторов за последний квартал с сортировкой по популярности
