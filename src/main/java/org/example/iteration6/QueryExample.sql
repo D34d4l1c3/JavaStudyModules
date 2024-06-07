@@ -47,7 +47,7 @@ where array ['Вадим Шефнер','Терри Пратчетт'] <@ bk.ats
   and not exists(select from library.rent_log r where r.product_id = u.id and status != 'Возвращено');
 
 --  выбрать все экземпляры книг, списанные за последний квартал
-select b.name, u.*
+ select b.name, u.*
 from library.product_unit u
          inner join library.books b on b.id = u.book_id
 where u.inactive_date >= current_date - interval '3 months';
@@ -66,7 +66,7 @@ limit 10;
 
 
 -- выбрать по 10 наиболее популярных книг по всем категориям за последний квартал с сортировкой по популярности
-select count(b.id) as pop_bc, b.id, max(b.name), b.type as bk_name
+EXPLAIN (FORMAT YAML) select count(b.id) as pop_bc, b.id, max(b.name), b.type as bk_name
 from library.rent_log r
          inner join library.product_unit pu on pu.id = r.product_id
          left join library.books b on b.id = pu.book_id
@@ -168,7 +168,7 @@ union all
 select return_date as event_day, count(id), 'Возвращено' as stat
 from rent_month t
 where t.status = 'Возвращено'
-group by return_date
+group by return_date;
 
 --- выбрать самые пустующие полки / стеллажи
 
@@ -189,7 +189,7 @@ order by cnt_unit;
 --- посчитать количество свободных мест для книг
 select count(1)
 from library.shelf_position
-where current_unit is null
+where current_unit is null;
 
 --- посчитать количество всех книг / экземпляров книг / авторов / книг по каждому автору / экзмпляров книг по каждому автору /
 select count(1) as cnt_book,'Количествр книг' from library.books
